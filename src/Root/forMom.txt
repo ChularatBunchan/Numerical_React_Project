@@ -1,0 +1,35 @@
+let gdata;
+  const getdata = () => {
+    console.log(numgen);
+    axios.post(url,{numgen:numgen})
+    .then((response)=>{
+        gdata=response.data;
+        console.log("get",gdata);
+        let n = Math.floor(Math.random()*gdata.lenght)
+        console.log(typeof response.data[n]);
+        let jsons=JSON.parse(gdata);
+        console.log(jsons[0].x)
+        let jsons2=JSON.parse(jsons[0].x);
+
+        for(i=0; i<numgen; i++){
+            document.getElementById("rowx"+i).value=jsons2.x[i];
+            document.getElementById("rowy"+i).value=jsons2.y[i];
+        }
+    })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+app.post("/linear", (req, res, next) => {
+  console.log('SELECT * FROM linear WHERE n='+req.body.numgen);
+
+  connection.query(
+    'SELECT * FROM linear WHERE n='+req.body.numgen,
+    (err, results) => {
+      if(err) return res.send("error")
+      let data = JSON.stringify(results)
+      console.log(data); // results contains rows returned by server
+      res.json(data);
+    }
+  );
+});
